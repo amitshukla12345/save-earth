@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,13 @@
     <title>Save Nature - News</title>
     <!-- <link rel="stylesheet" href="news.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="icon" type="image/jpeg" href="image/favicon.jpg">
+    <link rel="icon" type="image/jpeg" href="../image/favicon.jpg">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <div class="news-container">
         <header class="news-header">
@@ -19,25 +25,144 @@
             <div class="news-card">
                 <img src="../image/Mumbai.webp" alt="Forest News">
                 <div class="news-content">
-                    <h3><a href="https://indianexpress.com/article/express-exclusive/mumbai-lost-over-21000-trees-in-6-years-to-make-way-for-metro-road-projects-9233422/" target="_blank">Mumbai Lost Over 21,000 Trees</a></h3>
-                    <p>The city sacrificed over 21,000 trees for development projects, impacting its green cover. Read more to understand the long-term effects.</p>
+                    <div class="live-stat tree-stat"><i class="fas fa-tree"></i> Trees Lost Today: <span
+                            id="treeCounter">142</span></div>
+                    <h3><a href="https://indianexpress.com/article/express-exclusive/mumbai-lost-over-21000-trees-in-6-years-to-make-way-for-metro-road-projects-9233422/"
+                            target="_blank">Mumbai Lost Over 21,000 Trees</a></h3>
+                    <p>The city sacrificed over 21,000 trees for development projects, impacting its green cover. Read
+                        more to understand the long-term effects.</p>
                 </div>
             </div>
             <div class="news-card">
                 <img src="../image/pollution.jpg" alt="Pollution News">
                 <div class="news-content">
-                    <h3><a href="https://www.theguardian.com/environment" target="_blank">Air Pollution Reaches New Highs</a></h3>
-                    <p>Air pollution levels are breaking records globally, prompting urgent action on sustainable policies.</p>
+                    <div class="live-stat pollution-stat"><i class="fas fa-smog"></i> Avg AQI: <span
+                            id="aqiCounter">285</span> (Hazardous)</div>
+                    <h3><a href="https://www.theguardian.com/environment" target="_blank">Air Pollution Reaches New
+                            Highs</a></h3>
+                    <p>Air pollution levels are breaking records globally, prompting urgent action on sustainable
+                        policies.</p>
                 </div>
             </div>
             <div class="news-card">
                 <img src="../image/save_ocen.jpg" alt="Ocean News">
                 <div class="news-content">
-                    <h3><a href="https://www.nationalgeographic.com/environment/article/ocean-health" target="_blank">Save the Oceans</a></h3>
-                    <p>Plastic waste is choking the world's oceans. Discover how global initiatives aim to tackle this growing crisis.</p>
+                    <div class="live-stat ocean-stat"><i class="fas fa-water"></i> Plastic Dumped: <span
+                            id="plasticCounter">8</span> Tons/Hr</div>
+                    <h3><a href="https://www.nationalgeographic.com/environment/article/ocean-health"
+                            target="_blank">Save the Oceans</a></h3>
+                    <p>Plastic waste is choking the world's oceans. Discover how global initiatives aim to tackle this
+                        growing crisis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deforestation Dashboard Section -->
+        <div class="dashboard-container">
+            <header class="news-header">
+                <h1>India Forest Monitor</h1>
+                <p>Live tracking of deforestation hotspots and tree cover loss by state.</p>
+                <!-- Dashboard Toggle -->
+                <div class="dashboard-toggle-container">
+                    <button class="toggle-btn active" id="forestModeBtn">🌲 Forest Monitor</button>
+                    <button class="toggle-btn" id="pollutionModeBtn">🏭 Pollution Monitor</button>
+                </div>
+
+                <!-- State Search Section -->
+                <div class="search-container" style="margin-top: 20px;">
+                    <input list="states" id="stateInput" placeholder="Type to search state..."
+                        class="state-search-input">
+                    <datalist id="states">
+                        <option value="Andhra Pradesh">
+                        <option value="Arunachal Pradesh">
+                        <option value="Assam">
+                        <option value="Bihar">
+                        <option value="Chhattisgarh">
+                        <option value="Goa">
+                        <option value="Gujarat">
+                        <option value="Haryana">
+                        <option value="Himachal Pradesh">
+                        <option value="Jharkhand">
+                        <option value="Karnataka">
+                        <option value="Kerala">
+                        <option value="Madhya Pradesh">
+                        <option value="Maharashtra">
+                        <option value="Manipur">
+                        <option value="Meghalaya">
+                        <option value="Mizoram">
+                        <option value="Nagaland">
+                        <option value="Odisha">
+                        <option value="Punjab">
+                        <option value="Rajasthan">
+                        <option value="Sikkim">
+                        <option value="Tamil Nadu">
+                        <option value="Telangana">
+                        <option value="Tripura">
+                        <option value="Uttar Pradesh">
+                        <option value="Uttarakhand">
+                        <option value="West Bengal">
+                    </datalist>
+                    <button id="searchBtn" class="search-btn"><i class="fas fa-search"></i> Search</button>
+                </div>
+
+                <!-- State Statistics Panel (Initially Hidden) -->
+                <div id="statsPanel" class="stats-panel" style="display: none;">
+                    <div class="stat-item aqi-item">
+                        <i class="fas fa-wind"></i>
+                        <div>
+                            <h4>AQI Level</h4>
+                            <span id="statAQI">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-item tree-item">
+                        <i class="fas fa-tree"></i>
+                        <div>
+                            <h4>Trees Cut</h4>
+                            <span id="statTrees">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-item plastic-item">
+                        <i class="fas fa-recycle"></i>
+                        <div>
+                            <h4>Plastic Dumped</h4>
+                            <span id="statPlastic">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State News Ticker (Initially Hidden) -->
+                <div id="stateNewsFlash" class="news-flash" style="display: none;">
+                    <span class="flash-label">BREAKING NEWS:</span>
+                    <span id="flashText">Loading updates...</span>
+                </div>
+
+            </header>
+
+            <div class="dashboard-grid">
+                <!-- Map Section -->
+                <div class="dashboard-card">
+                    <h3>Deforestation Hotspots</h3>
+                    <!-- Explanatory note for the user -->
+                    <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">Click markers for details. Red circles
+                        indicate high deforestation zones.</p>
+                    <div id="map"></div>
+                </div>
+
+                <!-- Graph Section -->
+                <div class="dashboard-card">
+                    <h3>Tree Cover Loss (2024 Estimates)</h3>
+                    <div class="chart-container">
+                        <canvas id="forestChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Dashboard Logic -->
+    <script src="news_dashboard.js"></script>
 </body>
+
 </html>

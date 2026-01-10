@@ -9,7 +9,8 @@ body {
 /* Contact Section Container */
 .contact-container {
     max-width: 900px;
-    margin: 50px auto;
+    margin: 20px auto 50px auto;
+    clear: both;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 10px;
@@ -32,13 +33,14 @@ body {
 
 /* Contact Form Styles */
 .contact-form {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    margin-top: 20px;
 }
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
     align-items: center;
 }
 
@@ -49,74 +51,141 @@ form {
 }
 
 label {
-    font-size: 1rem;
-    color: #2c3e50;
-    margin-bottom: 5px;
-    display: inline-block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px;
+    display: block;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-input, textarea {
+input,
+textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 14px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 1rem;
-    outline: none;
+    color: #333;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
     box-sizing: border-box;
+    font-family: inherit;
 }
 
-input:focus, textarea:focus {
-    border-color: #3498db;
+input:focus,
+textarea:focus {
+    border-color: #27ae60;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);
+    outline: none;
 }
 
 textarea {
-    resize: none;
+    resize: vertical;
+    min-height: 120px;
 }
 
 /* Submit Button */
 .btn-submit {
-    padding: 10px 20px;
-    background-color: #3498db;
+    width: 100%;
+    max-width: 600px;
+    padding: 16px;
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
     color: #ffffff;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
 }
 
 .btn-submit:hover {
-    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+    background: linear-gradient(135deg, #219150 0%, #27ae60 100%);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
 }
 
 /* Contact Info Section */
 .contact-info {
     text-align: left;
-    padding: 20px;
+    padding: 30px;
+    margin-top: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 5px solid #27ae60;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .contact-info h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: #2c3e50;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
 }
 
 .contact-info ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    float: none;
+    width: auto;
+    overflow: visible;
 }
 
 .contact-info li {
-    font-size: 1rem;
-    color: #7f8c8d;
-    margin-bottom: 10px;
+    font-size: 1.05rem;
+    color: #555;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
+    transition: transform 0.2s ease;
+    float: none;
+    border-right: none;
+}
+
+.contact-info li:hover {
+    transform: translateX(5px);
+    color: #27ae60;
 }
 
 .contact-info i {
-    margin-right: 10px;
-    color: #3498db;
-    font-size: 1.2rem;
+    margin-right: 15px;
+    color: #27ae60;
+    font-size: 1.3rem;
+    width: 24px;
+    text-align: center;
+}
+
+.map-link {
+    text-decoration: none;
+    color: inherit;
+    /* Override global anchor styles */
+    display: inline-block;
+    width: auto;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-size: inherit;
+    transition: color 0.2s ease;
+}
+
+.map-link:hover {
+    color: #27ae60;
+    background-color: transparent;
+    /* Override global red background */
 }
