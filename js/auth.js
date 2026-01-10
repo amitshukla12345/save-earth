@@ -7,31 +7,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
 
+    // --- Helper: Clear Error on Input ---
+    function clearError(input) {
+        input.addEventListener('input', () => {
+            input.classList.remove('input-error');
+        });
+    }
+
     // --- Login Logic ---
     if (loginForm) {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        clearError(emailInput);
+        clearError(passwordInput);
+
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const submitBtn = loginForm.querySelector('.btn-auth');
-            submitBtn.innerText = 'Logging in...';
-            submitBtn.disabled = true;
 
-            setTimeout(() => {
-                // Set session
-                localStorage.setItem('isLoggedIn', 'true');
-                // Redirect to Home Page (which is now home.html)
-                window.location.href = 'home.html';
-            }, 1000);
+            // Get stored credentials
+            const storedUser = JSON.parse(localStorage.getItem('registeredUser'));
+
+            if (storedUser && storedUser.email === emailInput.value && storedUser.password === passwordInput.value) {
+                // Success
+                submitBtn.innerText = 'Logging in...';
+                submitBtn.disabled = true;
+                // Remove any previous errors
+                emailInput.classList.remove('input-error');
+                passwordInput.classList.remove('input-error');
+
+                setTimeout(() => {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    window.location.href = 'home.html';
+                }, 1000);
+            } else {
+                // Failure - Show Red Lines
+                emailInput.classList.add('input-error');
+                passwordInput.classList.add('input-error');
+                alert('Invalid Email or Password! Please try again.');
+            }
         });
     }
 
     // --- Register Logic ---
     if (registerForm) {
+        const passInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirm-password');
+
+        clearError(passInput);
+        clearError(confirmInput);
+
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirm-password').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = passInput.value;
+            const confirm = confirmInput.value;
 
             if (password !== confirm) {
+                // Show Red Lines on Mismatch
+                passInput.classList.add('input-error');
+                confirmInput.classList.add('input-error');
                 alert("Passwords do not match!");
                 return;
             }
@@ -41,8 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             setTimeout(() => {
-                alert('Account Created! Please Login.');
-                // Redirect to Login Page (index.html)
+                // Store user data
+                const user = { name, email, password };
+                localStorage.setItem('registeredUser', JSON.stringify(user));
+
+                alert('Account Created Successfully! Please Login.');
                 window.location.href = 'index.html';
             }, 1000);
         });

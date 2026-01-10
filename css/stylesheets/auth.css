@@ -93,6 +93,30 @@ body.auth-body {
     box-shadow: 0 0 8px rgba(39, 174, 96, 0.2);
 }
 
+/* Error State */
+.input-error {
+    border-color: #e74c3c !important;
+    /* Red color */
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.2) !important;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
 .btn-auth {
     width: 100%;
     padding: 14px;

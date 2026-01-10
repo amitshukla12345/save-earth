@@ -338,7 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 dashboardChart.data.labels = [key];
                 dashboardChart.data.datasets[0].data = [data.loss];
-                dashboardChart.data.datasets[0].backgroundColor = color === 'red' ? '#e74c3c' : '#2ecc71';
+                dashboardChart.data.datasets[0].backgroundColor = [color === 'red' ? '#e74c3c' : '#2ecc71'];
+                dashboardChart.options.plugins.title.text = `Tree Cover Loss: ${key}`;
                 dashboardChart.update();
 
             } else {
@@ -349,7 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const color = getPollutionColor(data.aqi);
                 dashboardChart.data.labels = [key];
                 dashboardChart.data.datasets[0].data = [data.aqi];
-                dashboardChart.data.datasets[0].backgroundColor = color;
+                dashboardChart.data.datasets[0].backgroundColor = [color];
+                dashboardChart.options.plugins.title.text = `Current AQI Level: ${key}`;
                 dashboardChart.update();
             }
         } else {
@@ -360,41 +362,75 @@ document.addEventListener('DOMContentLoaded', () => {
     searchBtn.addEventListener('click', handleSearch);
     stateInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
+    // Auto-search on Datalist Selection
+    stateInput.addEventListener('input', () => {
+        const query = stateInput.value.trim();
+        const source = currentMode === 'forest' ? forestData : pollutionData;
+        const key = Object.keys(source).find(k => k.toLowerCase() === query.toLowerCase());
+
+        // If the input matches a valid key, run search automatically
+        if (key) {
+            handleSearch();
+        }
+    });
+
     // Initialize list
     updateDatalist('forest');
 
     // ---------------------------------------------------------
-    // 5. Live Stats Simulation (For News Cards)
+    // 5. Live Stats Simulation (Updated for New Dashboard)
     // ---------------------------------------------------------
     function simulateLiveStats() {
-        const treeCounter = document.getElementById('treeCounter');
-        const aqiCounter = document.getElementById('aqiCounter');
-        const plasticCounter = document.getElementById('plasticCounter');
+        const treeCounter = document.getElementById('globalTreeCounter');
+        const aqiCounter = document.getElementById('globalAQICounter');
+        const plasticCounter = document.getElementById('globalPlasticCounter');
+        const fireCounter = document.getElementById('globalFireCounter');
 
         if (treeCounter) {
             setInterval(() => {
-                let current = parseInt(treeCounter.innerText);
-                treeCounter.innerText = current + 1;
+                let current = parseInt(treeCounter.innerText.replace(/,/g, ''));
+                treeCounter.innerText = (current + 1).toLocaleString();
             }, 3000);
         }
 
         if (aqiCounter) {
             setInterval(() => {
                 let current = parseInt(aqiCounter.innerText);
-                let change = Math.floor(Math.random() * 3) - 1;
+                let change = Math.floor(Math.random() * 5) - 2; // -2 to +2
                 aqiCounter.innerText = current + change;
-            }, 2000);
+            }, 4000);
         }
 
         if (plasticCounter) {
             setInterval(() => {
-                let current = parseInt(plasticCounter.innerText);
-                plasticCounter.innerText = current + 1;
+                let current = parseInt(plasticCounter.innerText.replace(/,/g, ''));
+                plasticCounter.innerText = (current + 5).toLocaleString();
             }, 5000);
+        }
+
+        if (fireCounter) {
+            setInterval(() => {
+                let current = parseInt(fireCounter.innerText);
+                let change = Math.floor(Math.random() * 3) - 1;
+                fireCounter.innerText = current + change;
+            }, 8000);
         }
     }
 
     simulateLiveStats();
+
+    // Re-attach Search Logic to new elements
+    const newSearchBtn = document.getElementById('searchBtn');
+    if (newSearchBtn) {
+        newSearchBtn.addEventListener('click', handleSearch);
+    }
+    const newStateInput = document.getElementById('stateInput');
+    if (newStateInput) {
+        newStateInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+    }
+
 
     // Global Read News Function (attached to window for HTML access)
     // ---------------------------------------------------------
