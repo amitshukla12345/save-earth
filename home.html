@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Nature - Protect Our Future</title>
+    <!-- Root paths -->
+    <link rel="stylesheet" href="./css/stylesheets/web.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" type="image/jpeg" href="./image/favicon.jpg">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-leaf"></i> EarthSavers
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html" class="active"><i class="fa-solid fa-house"></i> HOME</a></li>
+            <li><a href="./html/news.html"><i class="fa-solid fa-newspaper"></i> NEWS</a></li>
+            <li><a href="./html/contact.html"><i class="fa-solid fa-address-book"></i> CONTACT</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> LOGOUT</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="hero">
+        <div class="hero-content">
+            <div class="search-container">
+                <input type="text" placeholder="Search topics...">
+                <button><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <h1>Protect Nature, Secure Our Future</h1>
+            <p>Join the global movement to save our forests, oceans, and air. Small actions today create a sustainable
+                tomorrow.</p>
+            <a href="./html/news.html" class="cta-button">Explore Dashboard</a>
+        </div>
+
+        <!-- Cards Section -->
+        <section class="cards-section">
+            <article class="card">
+                <h2><i class="fa-solid fa-tree"></i> Save Trees</h2>
+                <p>One tree can make a million matches; one match can destroy a million trees. Preserve our green cover.
+                </p>
+            </article>
+
+            <article class="card">
+                <h2><i class="fa-solid fa-earth-americas"></i> Save Nature</h2>
+                <p>Don't be mean, keep it green. It's time to start thinking about the planet's well-being.</p>
+            </article>
+
+            <article class="card">
+                <h2><i class="fa-solid fa-hand-holding-heart"></i> Save Future</h2>
+                <p>Go digital and minimize waste. Every paper saved is a step towards a greener future.</p>
+            </article>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 EarthSavers. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Logic for Logout/Guard -->
+    <script src="js/auth.js"></script>
+    <script>
+        // Simple Guard for Home Page
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/stylesheets/web.css"> <!-- Added Global Styles -->
     <link rel="stylesheet" href="../css/stylesheets/news.css">
     <title>Save Nature - News</title>
     <!-- <link rel="stylesheet" href="news.css"> -->
@@ -16,7 +17,20 @@
 </head>
 
 <body>
-    <div class="news-container">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-leaf"></i> EarthSavers
+        </div>
+        <ul class="nav-links">
+            <li><a href="../home.html"><i class="fa-solid fa-house"></i> HOME</a></li>
+            <li><a href="news.html"><i class="fa-solid fa-newspaper"></i> NEWS</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-address-book"></i> CONTACT</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> LOGOUT</a></li>
+        </ul>
+    </nav>
+
+    <div class="news-container" style="margin-top: 100px;"> <!-- Margin for fixed nav -->
         <header class="news-header">
             <h1>Environmental News</h1>
             <p>Stay updated with the latest happenings around the globe regarding nature and sustainability.</p>
@@ -163,6 +177,25 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <!-- Dashboard Logic -->
     <script src="news_dashboard.js"></script>
+
+    <!-- Auth Logic -->
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = '../index.html';
+        }
+    </script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 EarthSavers. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

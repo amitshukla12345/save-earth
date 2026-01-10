@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EarthSavers</title>
-    <!-- Use auth-body class for specific background -->
+    <title>Register - EarthSavers</title>
     <link rel="stylesheet" href="css/stylesheets/auth.css">
     <style>
-        /* Inline fix for background image path since css is in subfolder */
+        /* Inline fix for background image path */
         body.auth-body {
             background-image: url("image/save nature.webp");
         }
@@ -22,25 +21,33 @@
     <div class="auth-wrapper">
         <div class="auth-card">
             <div class="auth-header">
-                <h2><i class="fa-solid fa-leaf"></i> EarthSavers</h2>
-                <p>Welcome Back! Please Login.</p>
+                <h2>Join EarthSavers</h2>
+                <p>Create your account today</p>
             </div>
 
-            <form id="loginForm">
+            <form id="registerForm">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
                     <input type="email" id="email" placeholder="user@example.com" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="Create password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" placeholder="Confirm password" required>
                 </div>
 
-                <button type="submit" class="btn-auth">Login</button>
+                <button type="submit" class="btn-auth">Register</button>
             </form>
 
             <div class="auth-footer">
-                <p>New here? <a href="register.html">Create an Account</a></p>
+                <p>Already have an account? <a href="index.html">Login here</a></p>
             </div>
         </div>
     </div>
