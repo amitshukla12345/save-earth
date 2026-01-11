@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/stylesheets/web.css"> <!-- Added Global Styles -->
+    <link rel="stylesheet" href="../css/stylesheets/web.css">
     <link rel="stylesheet" href="../css/stylesheets/news.css">
     <title>Save Nature - News</title>
-    <!-- <link rel="stylesheet" href="news.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="icon" type="image/jpeg" href="../image/favicon.jpg">
     <!-- Leaflet Map CSS -->
@@ -23,7 +22,7 @@
             <i class="fa-solid fa-leaf"></i> EarthSavers
         </div>
         <ul class="nav-links">
-            <li><a href="../home.html"><i class="fa-solid fa-house"></i> HOME</a></li>
+            <li><a href="../js/home.html"><i class="fa-solid fa-house"></i> HOME</a></li>
             <li><a href="news.html"><i class="fa-solid fa-newspaper"></i> NEWS</a></li>
             <li><a href="contact.html"><i class="fa-solid fa-address-book"></i> CONTACT</a></li>
             <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> LOGOUT</a></li>
@@ -146,7 +145,7 @@
     <script src="../js/auth.js"></script>
     <script>
         if (!localStorage.getItem('isLoggedIn')) {
-            window.location.href = '../index.html';
+            window.location.href = '../js/index.html';
         }
     </script>
     <!-- Footer -->

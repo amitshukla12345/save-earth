@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper: Clear Error on Input ---
     function clearError(input) {
+        if (!input) return;
         input.addEventListener('input', () => {
             input.classList.remove('input-error');
         });
@@ -19,12 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
 
-        clearError(emailInput);
-        clearError(passwordInput);
+        if (emailInput) clearError(emailInput);
+        if (passwordInput) clearError(passwordInput);
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const submitBtn = loginForm.querySelector('.btn-auth');
+            // Ensure inputs exist
+            if (!emailInput || !passwordInput) {
+                alert('Form elements missing.');
+                return;
+            }
 
             // Get stored credentials
             const storedUser = JSON.parse(localStorage.getItem('registeredUser'));
@@ -55,13 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const passInput = document.getElementById('password');
         const confirmInput = document.getElementById('confirm-password');
 
-        clearError(passInput);
-        clearError(confirmInput);
+        if (passInput) clearError(passInput);
+        if (confirmInput) clearError(confirmInput);
 
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const nameEl = document.getElementById('name');
+            const emailEl = document.getElementById('email');
+
+            if (!passInput || !confirmInput || !nameEl || !emailEl) {
+                alert('Form elements missing.');
+                return;
+            }
+
+            const name = nameEl.value;
+            const email = emailEl.value;
             const password = passInput.value;
             const confirm = confirmInput.value;
 

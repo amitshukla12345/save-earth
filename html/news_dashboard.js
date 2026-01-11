@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "Pune": { coords: [18.5204, 73.8567], aqi: 95 },
         "Ahmedabad": { coords: [23.0225, 72.5714], aqi: 210 },
         "Jaipur": { coords: [26.9124, 75.7873], aqi: 190 },
-        "Lucknow": { coords: [26.8467, 80.9462], aqi: 280 },
+            "Lucknow": { coords: [26.8467, 80.9462], aqi: 280 },
         "Patna": { coords: [25.5941, 85.1376], aqi: 310 }, // Hazardous
         "Indore": { coords: [22.7196, 75.8577], aqi: 80 }, // Cleanest
         "Nagpur": { coords: [21.1458, 79.0882], aqi: 120 },
@@ -71,12 +71,42 @@ document.addEventListener('DOMContentLoaded', () => {
         "Agra": { coords: [27.1767, 78.0081], aqi: 220 },
         "Vadodara": { coords: [22.3072, 73.1812], aqi: 150 },
         "Coimbatore": { coords: [11.0168, 76.9558], aqi: 65 }
+        ,"Andhra Pradesh": { coords: [15.9129, 79.7400], aqi: 114 },
+        "Arunachal Pradesh": { coords: [28.2180, 94.7278], aqi: 300 },
+        "Assam": { coords: [26.2006, 92.9376], aqi: 274 },
+        "Bihar": { coords: [25.0961, 85.3131], aqi: 80 },
+        "Chhattisgarh": { coords: [21.2787, 81.8661], aqi: 246 },
+        "Goa": { coords: [15.2993, 74.1240], aqi: 66 },
+        "Gujarat": { coords: [22.2587, 71.1924], aqi: 74 },
+        "Haryana": { coords: [29.0588, 76.0856], aqi: 60 },
+        "Himachal Pradesh": { coords: [31.1048, 77.1734], aqi: 92 },
+        "Jharkhand": { coords: [23.6102, 85.2799], aqi: 158 },
+        "Karnataka": { coords: [15.3173, 75.7139], aqi: 140 },
+        "Kerala": { coords: [10.8505, 76.2711], aqi: 106 },
+        "Madhya Pradesh": { coords: [22.9734, 78.6569], aqi: 222 },
+        "Maharashtra": { coords: [19.7515, 75.7139], aqi: 174 },
+        "Manipur": { coords: [24.6637, 93.9063], aqi: 152 },
+        "Meghalaya": { coords: [25.4670, 91.3662], aqi: 234 },
+        "Mizoram": { coords: [23.1645, 92.9376], aqi: 312 },
+        "Nagaland": { coords: [26.1584, 94.5624], aqi: 228 },
+        "Odisha": { coords: [20.9517, 85.0985], aqi: 300 },
+        "Punjab": { coords: [31.1471, 75.3412], aqi: 58 },
+        "Rajasthan": { coords: [27.0238, 74.2179], aqi: 68 },
+        "Sikkim": { coords: [27.5330, 88.5122], aqi: 72 },
+        "Tamil Nadu": { coords: [11.1271, 78.6569], aqi: 112 },
+        "Telangana": { coords: [18.1124, 79.0193], aqi: 200 },
+        "Tripura": { coords: [23.9408, 91.9882], aqi: 146 },
+        "Uttarakhand": { coords: [30.0668, 79.0193], aqi: 100 },
+        "Uttar Pradesh": { coords: [26.8467, 80.9462], aqi: 86 },
+        "West Bengal": { coords: [22.9868, 87.8550], aqi: 134 }
     };
 
     // State Variables
-    let currentMode = 'forest'; // 'forest' or 'pollution'
+    let currentMode = null; // 'forest' or 'pollution' - null until user selects
     let currentMarker = null;
     let cityMarkers = []; // For storing multiple city markers in pollution mode
+    let cityMarkerMap = {}; // Map city name -> marker for reliable lookup
+    let modeSelected = false; // user must select mode before searching
 
     // ---------------------------------------------------------
     // 2. Initialization
@@ -100,6 +130,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardDesc = document.querySelector('.news-header p');
     const forestBtn = document.getElementById('forestModeBtn');
     const pollutionBtn = document.getElementById('pollutionModeBtn');
+
+    // Disable search button until a mode is selected (keep input clickable)
+    if (searchBtn) searchBtn.disabled = true;
+
+    // Create a custom suggestions dropdown (appears below the search input)
+    let suggestionsBox = null;
+    const createSuggestionsBox = () => {
+        if (suggestionsBox) return suggestionsBox;
+        const wrapper = document.querySelector('.search-box') || document.body;
+        suggestionsBox = document.createElement('div');
+        suggestionsBox.style.position = 'absolute';
+        suggestionsBox.style.zIndex = '10000';
+        suggestionsBox.style.background = '#fff';
+        suggestionsBox.style.border = '1px solid #ccc';
+        suggestionsBox.style.borderTop = 'none';
+        suggestionsBox.style.maxHeight = '240px';
+        suggestionsBox.style.overflowY = 'auto';
+        suggestionsBox.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.className = 'custom-suggestions';
+        // Ensure wrapper is positioned so absolute child aligns
+        if (wrapper !== document.body) wrapper.style.position = wrapper.style.position || 'relative';
+        wrapper.appendChild(suggestionsBox);
+        return suggestionsBox;
+    };
 
     // ---------------------------------------------------------
     // 3. Helper Functions
@@ -143,19 +198,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return '#27ae60'; // Good - Green
     }
 
-    function updateDatalist(mode) {
+    // Populate datalist only when user types a query (avoid showing all options on focus)
+    function updateDatalist(mode, filter = '') {
         datalist.innerHTML = '';
         const source = mode === 'forest' ? forestData : pollutionData;
-        Object.keys(source).forEach(key => {
+        const q = (filter || '').trim().toLowerCase();
+        if (q.length === 0) {
+            // keep datalist empty until user types
+            stateInput.placeholder = mode === 'forest' ? "Search State (type to see suggestions)" : "Search City (type to see suggestions)";
+            return;
+        }
+
+        Object.keys(source).filter(k => k.toLowerCase().includes(q)).forEach(key => {
             let option = document.createElement('option');
             option.value = key;
             datalist.appendChild(option);
         });
+
         stateInput.placeholder = mode === 'forest' ? "Search State (e.g. Assam)..." : "Search City (e.g. Delhi)...";
-        stateInput.value = '';
     }
 
     function renderCityMarkers() {
+        // Remove any previous city markers to avoid duplicates
+        clearCityMarkers();
+
         // Clear old single marker
         if (currentMarker) map.removeLayer(currentMarker);
 
@@ -171,13 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 radius: data.aqi > 200 ? 12 : 8
             }).addTo(map).bindPopup(`<b>${city}</b><br>AQI: ${data.aqi}`);
 
+            // Attach city name to marker and map for reliable lookup
+            marker.city = city;
             cityMarkers.push(marker);
+            cityMarkerMap[city] = marker;
         });
     }
 
     function clearCityMarkers() {
         cityMarkers.forEach(m => map.removeLayer(m));
         cityMarkers = [];
+        cityMarkerMap = {};
     }
 
     // ---------------------------------------------------------
@@ -185,9 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------------------
 
     // Toggle Mode: Forest
-    forestBtn.addEventListener('click', () => {
-        if (currentMode === 'forest') return;
+    if (forestBtn) {
+        forestBtn.addEventListener('click', () => {
+        if (currentMode === 'forest' && modeSelected) return;
         currentMode = 'forest';
+        modeSelected = true;
+        // enable search button only
+        if (searchBtn) searchBtn.disabled = false;
 
         // UI Updates
         forestBtn.classList.add('active');
@@ -207,17 +281,30 @@ document.addEventListener('DOMContentLoaded', () => {
             options: getChartOptions('Loss in Hectares', false)
         });
 
-        // Hide special panels
-        document.getElementById('statsPanel').style.display = 'none';
-        document.getElementById('stateNewsFlash').style.display = 'none';
+        // Hide special panels (if present)
+        const _statsPanel = document.getElementById('statsPanel');
+        if (_statsPanel) _statsPanel.style.display = 'none';
+        const _stateNewsFlash = document.getElementById('stateNewsFlash');
+        if (_stateNewsFlash) _stateNewsFlash.style.display = 'none';
 
         updateDatalist('forest');
-    });
+        // If user already has a state typed, trigger search in the new mode
+        if (stateInput && stateInput.value.trim() !== '') {
+            const q = stateInput.value.trim();
+            const match = Object.keys(forestData).find(k => k.toLowerCase() === q.toLowerCase());
+            if (match) handleSearch();
+        }
+        });
+    }
 
     // Toggle Mode: Pollution
-    pollutionBtn.addEventListener('click', () => {
-        if (currentMode === 'pollution') return;
+    if (pollutionBtn) {
+        pollutionBtn.addEventListener('click', () => {
+        if (currentMode === 'pollution' && modeSelected) return;
         currentMode = 'pollution';
+        modeSelected = true;
+        // enable search button only
+        if (searchBtn) searchBtn.disabled = false;
 
         // UI Updates
         pollutionBtn.classList.add('active');
@@ -250,24 +337,44 @@ document.addEventListener('DOMContentLoaded', () => {
             options: getChartOptions('AQI Level', true) // true for horizontal
         });
 
-        // Hide special panels
-        document.getElementById('statsPanel').style.display = 'none';
-        document.getElementById('stateNewsFlash').style.display = 'none';
+        // Hide special panels (if present)
+        const _statsPanel2 = document.getElementById('statsPanel');
+        if (_statsPanel2) _statsPanel2.style.display = 'none';
+        const _stateNewsFlash2 = document.getElementById('stateNewsFlash');
+        if (_stateNewsFlash2) _stateNewsFlash2.style.display = 'none';
 
         updateDatalist('pollution');
-    });
+        // If user already has a state/city typed, trigger search in the new mode
+        if (stateInput && stateInput.value.trim() !== '') {
+            const q = stateInput.value.trim();
+            const match = Object.keys(pollutionData).find(k => k.toLowerCase() === q.toLowerCase());
+            if (match) handleSearch();
+        }
+        });
+    }
 
     // Search Handler
     function handleSearch() {
+        if (!stateInput) return;
+        if (!modeSelected) { alert('Please select Forest or Pollution mode first.'); return; }
         const query = stateInput.value.trim();
         const source = currentMode === 'forest' ? forestData : pollutionData;
-        const key = Object.keys(source).find(k => k.toLowerCase() === query.toLowerCase());
+
+        // Prefer exact key (case-sensitive), otherwise case-insensitive exact match.
+        let key = null;
+        if (query in source) {
+            key = query;
+        } else {
+            key = Object.keys(source).find(k => k.toLowerCase() === query.toLowerCase()) || null;
+        }
 
         if (key && source[key]) {
             const data = source[key];
-            map.flyTo(data.coords, 10);
+            // Use different zoom for state-level (forest) vs city-level (pollution)
+            const zoom = currentMode === 'forest' ? 7 : 10;
+            map.flyTo(data.coords, zoom);
 
-            // --- Update Stats Panel ---
+            // --- Update Stats Panel --- (guarded: elements may not exist on this page)
             const statsPanel = document.getElementById('statsPanel');
             const statAQI = document.getElementById('statAQI');
             const statTrees = document.getElementById('statTrees');
@@ -288,12 +395,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 plastic = Math.floor(data.aqi / 3);
             }
 
-            statAQI.innerText = aqi + (aqi > 200 ? " (Hazardous)" : (aqi > 100 ? " (Unhealthy)" : " (Good)"));
-            statTrees.innerText = trees + " Ha";
-            statPlastic.innerText = plastic + " Tons/Year";
-            statAQI.style.color = getPollutionColor(aqi);
+            if (statAQI) statAQI.innerText = aqi + (aqi > 200 ? " (Hazardous)" : (aqi > 100 ? " (Unhealthy)" : " (Good)"));
+            if (statTrees) statTrees.innerText = trees + " Ha";
+            if (statPlastic) statPlastic.innerText = plastic + " Tons/Year";
+            if (statAQI) statAQI.style.color = getPollutionColor(aqi);
 
-            statsPanel.style.display = 'flex';
+            if (statsPanel) statsPanel.style.display = 'flex';
 
             // --- Update News Flash ---
             // If explicit news exists for this state, use it. Else generic.
@@ -312,29 +419,45 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 newsDesc = news;
             }
-            flashText.textContent = news;
-            newsFlash.style.display = 'flex';
+            if (flashText) flashText.textContent = news;
+            if (newsFlash) newsFlash.style.display = 'flex';
 
             // --- Update News Cards Dynamically ---
             // Card 1: Tree/Forest Focus
-            document.getElementById('card1Title').innerText = `${key} Green Cover Under Threat`;
-            document.getElementById('card1Desc').innerText = `Deforestation in ${key} has reached alarming levels. ${trees} hectares of forest land lost recently. ${newsDesc}`;
+            const c1t = document.getElementById('card1Title');
+            const c1d = document.getElementById('card1Desc');
+            const c2t = document.getElementById('card2Title');
+            const c2d = document.getElementById('card2Desc');
+            const c3t = document.getElementById('card3Title');
+            const c3d = document.getElementById('card3Desc');
 
-            // Card 2: Pollution Focus
-            document.getElementById('card2Title').innerText = `${key} Air Quality Update`;
-            document.getElementById('card2Desc').innerText = `Air Quality Index in major areas of ${key} stands at ${aqi}. Residents are facing health challenges.`;
-
-            // Card 3: General/Water Focus
-            document.getElementById('card3Title').innerText = `Preserving ${key}'s Water Bodies`;
-            document.getElementById('card3Desc').innerText = `Local rivers and lakes in ${key} are facing pollution from plastic waste (${plastic} Tons/Year). Urgent cleanup needed.`;
+            if (c1t) c1t.innerText = `${key} Green Cover Under Threat`;
+            if (c1d) c1d.innerText = `Deforestation in ${key} has reached alarming levels. ${trees} hectares of forest land lost recently. ${newsDesc}`;
+            if (c2t) c2t.innerText = `${key} Air Quality Update`;
+            if (c2d) c2d.innerText = `Air Quality Index in major areas of ${key} stands at ${aqi}. Residents are facing health challenges.`;
+            if (c3t) c3t.innerText = `Preserving ${key}'s Water Bodies`;
+            if (c3d) c3d.innerText = `Local rivers and lakes in ${key} are facing pollution from plastic waste (${plastic} Tons/Year). Urgent cleanup needed.`;
 
             // --- Map & Chart Logics ---
             if (currentMode === 'forest') {
+                // Represent the whole state area (not just a city) so users see the state
+                clearCityMarkers();
                 if (currentMarker) map.removeLayer(currentMarker);
                 const color = data.loss > 10000 ? 'red' : 'green';
+                const stateRadius = 300000; // ~300km to indicate state area
                 currentMarker = L.circle(data.coords, {
-                    color: color, fillColor: color, fillOpacity: 0.5, radius: 40000
-                }).addTo(map).bindPopup(`<b>${key}</b><br>Loss: ${data.loss} Ha`).openPopup();
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.2,
+                    radius: stateRadius
+                }).addTo(map).bindPopup(`<b>${key} (State Area)</b><br>Loss: ${data.loss} Ha`).openPopup();
+
+                // Fit map to the circle bounds so the state area is visible
+                try {
+                    map.fitBounds(currentMarker.getBounds(), { padding: [50, 50] });
+                } catch (e) {
+                    map.setView(data.coords, 6);
+                }
 
                 dashboardChart.data.labels = [key];
                 dashboardChart.data.datasets[0].data = [data.loss];
@@ -344,8 +467,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else {
                 // Pollution Mode
-                const existingMarker = cityMarkers.find(m => m.getPopup().getContent().includes(key));
-                if (existingMarker) existingMarker.openPopup();
+                // Use direct map lookup for accuracy; create marker if missing
+                let existingMarker = cityMarkerMap[key];
+                if (existingMarker) {
+                    existingMarker.openPopup();
+                } else {
+                    const color = getPollutionColor(data.aqi);
+                    const marker = L.circleMarker(data.coords, {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        radius: data.aqi > 200 ? 12 : 8
+                    }).addTo(map).bindPopup(`<b>${key}</b><br>AQI: ${data.aqi}`);
+                    marker.city = key;
+                    cityMarkers.push(marker);
+                    cityMarkerMap[key] = marker;
+                    marker.openPopup();
+                }
 
                 const color = getPollutionColor(data.aqi);
                 dashboardChart.data.labels = [key];
@@ -359,22 +497,77 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    searchBtn.addEventListener('click', handleSearch);
-    stateInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
+    if (searchBtn) searchBtn.addEventListener('click', handleSearch);
+    if (stateInput) stateInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
-    // Auto-search on Datalist Selection
-    stateInput.addEventListener('input', () => {
+    // Suggestions and auto-search behavior
+    if (stateInput) stateInput.addEventListener('input', () => {
         const query = stateInput.value.trim();
-        const source = currentMode === 'forest' ? forestData : pollutionData;
-        const key = Object.keys(source).find(k => k.toLowerCase() === query.toLowerCase());
 
-        // If the input matches a valid key, run search automatically
-        if (key) {
-            handleSearch();
+        const box = createSuggestionsBox();
+        box.innerHTML = '';
+        if (query.length < 2) {
+            box.style.display = 'none';
+            return;
         }
+
+        // If mode is selected, search that dataset; otherwise merge both for suggestions
+        let keys = [];
+        if (modeSelected && currentMode) {
+            keys = Object.keys(currentMode === 'forest' ? forestData : pollutionData);
+        } else {
+            keys = Object.keys(Object.assign({}, forestData, pollutionData));
+        }
+
+        const lc = query.toLowerCase();
+        const matches = keys.filter(k => k.toLowerCase().includes(lc));
+        if (matches.length === 0) {
+            box.style.display = 'none';
+            return;
+        }
+
+        matches.slice(0, 100).forEach(key => {
+            const item = document.createElement('div');
+            item.className = 'suggestion-item';
+            item.style.padding = '8px 10px';
+            item.style.cursor = 'pointer';
+            item.style.borderTop = '1px solid #f0f0f0';
+            item.innerText = key;
+            item.addEventListener('click', () => {
+                stateInput.value = key;
+                box.style.display = 'none';
+                // If the mode wasn't selected yet, pick the mode based on where the key exists
+                if (!modeSelected) {
+                    if (key in forestData && !(key in pollutionData)) {
+                        currentMode = 'forest';
+                    } else if (key in pollutionData && !(key in forestData)) {
+                        currentMode = 'pollution';
+                    } else {
+                        // If present in both (states), default to forest view when selecting
+                        currentMode = 'forest';
+                    }
+                    modeSelected = true;
+                    if (searchBtn) searchBtn.disabled = false;
+                }
+                handleSearch();
+            });
+            box.appendChild(item);
+        });
+        // Align and size suggestions box with input
+        box.style.width = stateInput.offsetWidth + 'px';
+        box.style.left = (stateInput.offsetLeft) + 'px';
+        box.style.top = (stateInput.offsetTop + stateInput.offsetHeight) + 'px';
+        box.style.display = 'block';
     });
 
-    // Initialize list
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!suggestionsBox) return;
+        if (e.target === stateInput) return;
+        if (!suggestionsBox.contains(e.target)) suggestionsBox.style.display = 'none';
+    });
+
+    // Initialize list (empty until typing)
     updateDatalist('forest');
 
     // ---------------------------------------------------------
@@ -419,17 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     simulateLiveStats();
 
-    // Re-attach Search Logic to new elements
-    const newSearchBtn = document.getElementById('searchBtn');
-    if (newSearchBtn) {
-        newSearchBtn.addEventListener('click', handleSearch);
-    }
-    const newStateInput = document.getElementById('stateInput');
-    if (newStateInput) {
-        newStateInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSearch();
-        });
-    }
+    // Note: search/event listeners are attached above with guards; no re-attachment required.
 
 
     // Global Read News Function (attached to window for HTML access)
@@ -454,7 +637,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const utterance = new SpeechSynthesisUtterance(`${title}. ${desc}`);
             utterance.rate = 1;
             utterance.pitch = 1;
-            utterance.access = "Microsoft David - English (United States)"; // Optional preference
             window.speechSynthesis.speak(utterance);
         }
     };

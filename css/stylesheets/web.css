@@ -309,6 +309,10 @@ body {
         font-size: 1rem;
     }
 
+    .hero {
+        padding-top: 150px;
+    }
+
     .search-container input {
         width: 100%;
         max-width: 200px;
