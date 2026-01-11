@@ -93,6 +93,32 @@ body.auth-body {
     box-shadow: 0 0 8px rgba(39, 174, 96, 0.2);
 }
 
+/* Input with Icon Wrapper */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #888;
+    font-size: 1rem;
+    pointer-events: none;
+    /* Let clicks pass through to input */
+    transition: color 0.3s;
+}
+
+.input-wrapper input {
+    padding-left: 45px;
+    /* Make space for icon */
+}
+
+.input-wrapper input:focus+i {
+    color: #27ae60;
+}
+
 /* Error State */
 .input-error {
     border-color: #e74c3c !important;
