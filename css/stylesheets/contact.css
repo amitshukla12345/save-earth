@@ -87,6 +87,31 @@ textarea {
     min-height: 120px;
 }
 
+/* Input with Icon Wrapper */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #888;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: color 0.3s;
+}
+
+.input-wrapper input {
+    padding-left: 45px;
+    /* Make space for icon */
+}
+
+.input-wrapper input:focus+i {
+    color: #27ae60;
+}
+
 /* Submit Button */
 .btn-submit {
     width: 100%;
@@ -187,5 +212,25 @@ textarea {
 .map-link:hover {
     color: #27ae60;
     background-color: transparent;
-    /* Override global red background */
+}
+
+.contact-info a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* Make the whole row width clickable */
+}
+
+.contact-info a:hover {
+    text-decoration: none;
+    /* underlined text inside might be better, but let's stick to simple first */
+}
+
+.contact-info a:hover span,
+/* If we had a span, but we just have text. */
+.contact-info a:hover {
+    color: #27ae60;
+    /* Highlight on hover */
 }
