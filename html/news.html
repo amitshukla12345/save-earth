@@ -124,8 +124,55 @@
                 </div>
             </div>
 
+            <!-- State Details Section (Dynamic) -->
+            <div id="statsPanel"
+                style="display:none; justify-content: space-around; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="text-align: center;">
+                    <h3 style="font-size: 0.9rem; color: #777;">AQI Level</h3>
+                    <span id="statAQI" style="font-size: 1.5rem; font-weight: 800; color: #333;">--</span>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="font-size: 0.9rem; color: #777;">Tree Loss</h3>
+                    <span id="statTrees" style="font-size: 1.5rem; font-weight: 800; color: #e74c3c;">--</span>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="font-size: 0.9rem; color: #777;">Plastic / Year</h3>
+                    <span id="statPlastic" style="font-size: 1.5rem; font-weight: 800; color: #27ae60;">--</span>
+                </div>
+            </div>
+
+            <div id="stateNewsFlash"
+                style="display:none; background: #fef9e7; border-left: 5px solid #f39c12; color: #856404; padding: 15px; border-radius: 8px; align-items: center; gap: 10px; margin-top: 20px;">
+                <i class="fas fa-exclamation-triangle"></i> <span id="flashText">Alert text...</span>
+            </div>
+
+            <div class="info-cards-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 25px;">
+                <div id="card1" class="card-style" style="cursor: pointer;" onclick="readNews('card1')">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 id="card1Title">State Insight</h3>
+                        <i class="fas fa-volume-up" style="color:#aaa;"></i>
+                    </div>
+                    <p id="card1Desc" style="margin-top: 10px; color: #555;">Select a state to see details.</p>
+                </div>
+                <div id="card2" class="card-style" style="cursor: pointer;" onclick="readNews('card2')">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 id="card2Title">Pollution Data</h3>
+                        <i class="fas fa-volume-up" style="color:#aaa;"></i>
+                    </div>
+                    <p id="card2Desc" style="margin-top: 10px; color: #555;">...</p>
+                </div>
+                <div id="card3" class="card-style" style="cursor: pointer;" onclick="readNews('card3')">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 id="card3Title">Water Resources</h3>
+                        <i class="fas fa-volume-up" style="color:#aaa;"></i>
+                    </div>
+                    <p id="card3Desc" style="margin-top: 10px; color: #555;">...</p>
+                </div>
+            </div>
+
             <!-- 3. Analytics Section -->
-            <div class="analytics-row card-style">
+            <div class="analytics-row card-style" style="margin-top: 25px;">
                 <div class="chart-header">
                     <h3>Data Trend Analysis (2024)</h3>
                 </div>
@@ -140,7 +187,7 @@
     <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <!-- Dashboard Logic -->
-    <script src="../js/news_dashboard.js"></script>
+    <script src="news_dashboard.js"></script>
 
     <!-- Auth Logic -->
     <script src="../js/auth.js"></script>
