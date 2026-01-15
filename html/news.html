@@ -22,7 +22,7 @@
             <i class="fa-solid fa-leaf"></i> EarthSavers
         </div>
         <ul class="nav-links">
-            <li><a href="../js/home.html"><i class="fa-solid fa-house"></i> HOME</a></li>
+            <li><a href="../home.html"><i class="fa-solid fa-house"></i> HOME</a></li>
             <li><a href="news.html"><i class="fa-solid fa-newspaper"></i> NEWS</a></li>
             <li><a href="contact.html"><i class="fa-solid fa-address-book"></i> CONTACT</a></li>
             <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> LOGOUT</a></li>
@@ -140,13 +140,13 @@
     <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <!-- Dashboard Logic -->
-    <script src="news_dashboard.js"></script>
+    <script src="../js/news_dashboard.js"></script>
 
     <!-- Auth Logic -->
     <script src="../js/auth.js"></script>
     <script>
         if (!localStorage.getItem('isLoggedIn')) {
-            window.location.href = '../js/index.html';
+            window.location.href = '../index.html';
         }
     </script>
     <!-- Footer -->
